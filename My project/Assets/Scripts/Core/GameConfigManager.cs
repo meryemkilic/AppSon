@@ -2,14 +2,14 @@ using UnityEngine;
 using Cysharp.Threading.Tasks; 
 using SpeechTherapy.Data;      
 using SpeechTherapy.Services;  
+using System.Collections.Generic; // List için eklendi
 
-namespace SpeechTherapy.Core
+namespace SpeechTherapy.Core // Eğer klasör yapınızdan dolayı Managers kullanıyorsanız, onu koruyun.
 {
     public class GameConfigManager : MonoBehaviour
     {
         public static GameConfigManager Instance { get; private set; }
 
-        // Inspector'dan gizledik, çünkü kodla yöneteceğiz.
         private ApiDataService _apiService;
 
         // --- STATE ---
@@ -32,14 +32,10 @@ namespace SpeechTherapy.Core
                 return;
             }
 
-            // 2. DEPENDENCY COMPOSITION (Bağımlılık Kurulumu)
-            // GetComponent kullanmıyoruz. 
-            // AddComponent hem ekler hem referansı döndürür. Bellek dostudur.
+            // 2. DEPENDENCY COMPOSITION
             Debug.Log("⚙️ Sistem başlatılıyor: Servisler enjekte ediliyor...");
-            
             _apiService = gameObject.AddComponent<ApiDataService>();
             
-            // Eğer servis eklenemezse null döner, kontrol edelim (Opsiyonel ama güvenli)
             if (_apiService == null)
             {
                 Debug.LogError("🚨 KRİTİK HATA: ApiDataService oluşturulamadı!");
@@ -55,7 +51,6 @@ namespace SpeechTherapy.Core
 
         public async UniTask<bool> AuthenticateUser(string username, string password)
         {
-            // Servis referansımız garanti, direkt kullanıyoruz.
             try
             {
                 CurrentUser = await _apiService.Login(username, password);
@@ -65,6 +60,20 @@ namespace SpeechTherapy.Core
             {
                 Debug.LogError($"Patron: Giriş başarısız! - {ex.Message}");
                 return false;
+            }
+        }
+
+        // 🌟 DÜZELTİLDİ: Bu metot artık sınıfın içinde.
+        public async UniTask<LetterItem[]> GetAvailableLetters()
+        {
+            try
+            {
+                return await _apiService.GetAvailableLetters();
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Patron: Harfler alınamadı! - {ex.Message}");
+                return null;
             }
         }
 
@@ -105,37 +114,5 @@ namespace SpeechTherapy.Core
                 return false;
             }
         }
-    }// Assets/_Game/Scripts/Services/ApiDataService.cs içindeki ilgili metot:
-
-        public async UniTask<LetterItem[]> GetAvailableLetters()
-        {
-            if (_useMockData)
-            {
-                await UniTask.Delay(100);
-                Debug.Log("🎭 [MOCK] Tüm harfler açık olarak listeleniyor...");
-
-                // Basit bir döngü ile A'dan Z'ye harf üretelim
-                // Hepsi KİLİTSİZ (IsLocked = false)
-                var mockList = new List<LetterItem>();
-                string alphabet = "BCÇDFGĞHKLMNPRSŞTVYZ";
-                
-                foreach (char c in alphabet)
-                {
-                    mockList.Add(new LetterItem 
-                    { 
-                        Char = c.ToString(), 
-                        IsLocked = false, // Hepsini açtık
-                        Stars = UnityEngine.Random.Range(0, 4) // Rastgele yıldız (0-3 arası)
-                    });
-                }
-
-                return mockList.ToArray();
-            }
-
-            // ... (Gerçek bağlantı kısmı aynı kalacak) ...
-             var url = $"{BASE_URL}/letters"; 
-            // ...
-        }
-
-        
+    }
 }

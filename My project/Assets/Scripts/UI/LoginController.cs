@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements; // UI Toolkit kütüphanesi
 using Cysharp.Threading.Tasks; // UniTask
 using SpeechTherapy.Core;      // GameConfigManager'a ulaşmak için
+using UnityEngine.SceneManagement;
 
 namespace SpeechTherapy.UI
 {
@@ -76,7 +77,8 @@ namespace SpeechTherapy.UI
             {
                 Debug.Log("🎉 UI: Giriş Başarılı! Ana Menüye geçiliyor...");
                 ShowError(""); // Varsa hata mesajını sil
-                // İleride buraya: SceneManager.LoadScene("MenuScene"); gelecek
+                 SceneManager.LoadScene("MenuScene");
+                
             }
             else
             {

@@ -12,7 +12,7 @@ namespace SpeechTherapy.Services
     public class ApiDataService : MonoBehaviour
     {
         [Header("Geliştirici Ayarları")]
-        [SerializeField] private bool _useMockData = true; // ✅ İŞTE SİHİRLİ ŞALTERİMİZ
+        [SerializeField] private bool _useMockData = true; // Simülasyon Şalteri
         
         private const string BASE_URL = "https://senin-backend-adresin.onrender.com/api";
         private string _jwtToken;
@@ -24,8 +24,8 @@ namespace SpeechTherapy.Services
         {
             if (_useMockData)
             {
-                // 🎭 SİMÜLASYON: Sanki backend cevap vermiş gibi davranıyoruz.
-                await UniTask.Delay(500); // Gerçekçilik için yarım saniye bekle
+                // 🎭 MOCK DATA RETURN
+                await UniTask.Delay(500);
                 Debug.Log($"🎭 [MOCK] Giriş yapıldı: {username}");
                 
                 return new AuthResponse 
@@ -36,7 +36,7 @@ namespace SpeechTherapy.Services
                 };
             }
 
-            // 🌐 GERÇEK BAĞLANTI (Şu an çalışmayacak)
+            // 🌐 GERÇEK BAĞLANTI
             var url = $"{BASE_URL}/auth/login";
             var bodyData = new { username, password };
             string jsonBody = JsonConvert.SerializeObject(bodyData);
@@ -54,7 +54,7 @@ namespace SpeechTherapy.Services
 
                 var authData = JsonConvert.DeserializeObject<AuthResponse>(request.downloadHandler.text);
                 _jwtToken = authData.Token;
-                return authData;
+                return authData; // GERÇEK RETURN
             }
         }
 
@@ -67,12 +67,8 @@ namespace SpeechTherapy.Services
             {
                 await UniTask.Delay(500);
                 Debug.Log($"🎭 [MOCK] Oyun listesi oluşturuluyor: {letter} - {type}");
-
-                // 🌟 SENARYO GEREĞİ LİSTE:
-                // 1. Kolay Oyun: Açık
-                // 2. Orta Oyun: ÖDEV (Terapist Atamış)
-                // 3. Zor Oyun: Kilitli
                 
+                // 🌟 MOCK DATA RETURN
                 return new GameLevelItem[]
                 {
                     new GameLevelItem 
@@ -89,7 +85,7 @@ namespace SpeechTherapy.Services
                         Name = "Gölge Bulmaca (Orta)", 
                         DifficultyLevel = 2, 
                         IsLocked = false, 
-                        IsAssignedTask = true // 🌟 İŞTE TERAPİST ÖDEVİ BURADA
+                        IsAssignedTask = true // TERAPİST ÖDEVİ
                     },
                     new GameLevelItem 
                     { 
@@ -108,8 +104,10 @@ namespace SpeechTherapy.Services
             {
                 if (!string.IsNullOrEmpty(_jwtToken)) request.SetRequestHeader("Authorization", $"Bearer {_jwtToken}");
                 await request.SendWebRequest();
+                
                 if (request.result != UnityWebRequest.Result.Success) throw new Exception(request.error);
-                return JsonConvert.DeserializeObject<GameLevelItem[]>(request.downloadHandler.text);
+                
+                return JsonConvert.DeserializeObject<GameLevelItem[]>(request.downloadHandler.text); // GERÇEK RETURN
             }
         }
 
@@ -120,10 +118,10 @@ namespace SpeechTherapy.Services
         {
             if (_useMockData)
             {
-                await UniTask.Delay(1000); // İndirme süresi simülasyonu
+                await UniTask.Delay(1000);
                 Debug.Log($"🎭 [MOCK] Asset Seti hazırlanıyor: {setId}");
 
-                // "Gölge Bulmaca" için örnek içerik
+                // 🌟 MOCK DATA RETURN
                 return new AssetSetResponse
                 {
                     SetId = setId,
@@ -131,20 +129,8 @@ namespace SpeechTherapy.Services
                     Type = "word",
                     Assets = new List<AssetItem>
                     {
-                        new AssetItem 
-                        { 
-                            Id = "asset_1", 
-                            TextContent = "KEDİ", 
-                            ImageUrl = "https://placehold.co/200x200/png?text=Kedi", // Test için gerçek internet resmi
-                            IsTarget = true 
-                        },
-                        new AssetItem 
-                        { 
-                            Id = "asset_2", 
-                            TextContent = "KALE", 
-                            ImageUrl = "https://placehold.co/200x200/png?text=Kale", 
-                            IsTarget = false 
-                        }
+                        new AssetItem { Id = "asset_1", TextContent = "KEDİ", ImageUrl = "https://placehold.co/200x200/png?text=Kedi", IsTarget = true },
+                        new AssetItem { Id = "asset_2", TextContent = "KALE", ImageUrl = "https://placehold.co/200x200/png?text=Kale", IsTarget = false }
                     }
                 };
             }
@@ -155,11 +141,16 @@ namespace SpeechTherapy.Services
             {
                 if (!string.IsNullOrEmpty(_jwtToken)) request.SetRequestHeader("Authorization", $"Bearer {_jwtToken}");
                 await request.SendWebRequest();
+                
                 if (request.result != UnityWebRequest.Result.Success) throw new Exception(request.error);
-                return JsonConvert.DeserializeObject<AssetSetResponse>(request.downloadHandler.text);
+                
+                return JsonConvert.DeserializeObject<AssetSetResponse>(request.downloadHandler.text); // GERÇEK RETURN
             }
         }
 
+        // -------------------------------------------------------------------------
+        // 4. HARF LİSTESİ ÇEKME
+        // -------------------------------------------------------------------------
         public async UniTask<LetterItem[]> GetAvailableLetters()
         {
             if (_useMockData)
@@ -167,8 +158,6 @@ namespace SpeechTherapy.Services
                 await UniTask.Delay(100);
                 Debug.Log("🎭 [MOCK] Tüm harfler açık olarak listeleniyor...");
 
-                // Basit bir döngü ile A'dan Z'ye harf üretelim
-                // Hepsi KİLİTSİZ (IsLocked = false)
                 var mockList = new List<LetterItem>();
                 string alphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
                 
@@ -177,18 +166,29 @@ namespace SpeechTherapy.Services
                     mockList.Add(new LetterItem 
                     { 
                         Char = c.ToString(), 
-                        IsLocked = false, // Hepsini açtık
-                        Stars = UnityEngine.Random.Range(0, 4) // Rastgele yıldız (0-3 arası)
+                        IsLocked = false, 
+                        Stars = UnityEngine.Random.Range(0, 4) 
                     });
                 }
 
-                return mockList.ToArray();
+                return mockList.ToArray(); // MOCK RETURN
             }
 
-            // ... (Gerçek bağlantı kısmı aynı kalacak) ...
-             var url = $"{BASE_URL}/letters"; 
-            // ...
+            // 🌐 GERÇEK BAĞLANTI
+            var url = $"{BASE_URL}/letters"; 
+            
+            using (var request = UnityWebRequest.Get(url))
+            {
+                if (!string.IsNullOrEmpty(_jwtToken)) request.SetRequestHeader("Authorization", $"Bearer {_jwtToken}");
+                await request.SendWebRequest();
+                
+                if (request.result != UnityWebRequest.Result.Success) 
+                {
+                     throw new Exception("Harf listesi alınamadı: " + request.error);
+                }
+
+                return JsonConvert.DeserializeObject<LetterItem[]>(request.downloadHandler.text); // GERÇEK RETURN
+            }
         }
     }
-    
 }

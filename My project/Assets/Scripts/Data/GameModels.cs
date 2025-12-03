@@ -88,8 +88,6 @@ namespace SpeechTherapy.Data
         public bool IsTarget { get; set; } // Doğru cevap bu mu?
     }
 
-    
-}
 
 /// <summary>
     /// Ana menüde görülecek Harf kutusu.
@@ -106,3 +104,4 @@ namespace SpeechTherapy.Data
         [JsonProperty("stars")]
         public int Stars { get; set; } // O harfteki genel başarısı (0-3)
     }
+}
