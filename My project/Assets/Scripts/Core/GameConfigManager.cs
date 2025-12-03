@@ -1,0 +1,102 @@
+using UnityEngine;
+using Cysharp.Threading.Tasks; 
+using SpeechTherapy.Data;      
+using SpeechTherapy.Services;  
+
+namespace SpeechTherapy.Core
+{
+    public class GameConfigManager : MonoBehaviour
+    {
+        public static GameConfigManager Instance { get; private set; }
+
+        // Inspector'dan gizledik, çünkü kodla yöneteceğiz.
+        private ApiDataService _apiService;
+
+        // --- STATE ---
+        public AuthResponse CurrentUser { get; private set; }
+        public string CurrentLetter { get; private set; }
+        public string CurrentFloorType { get; private set; }
+        public AssetSetResponse ActiveAssetSet { get; private set; }
+
+        private void Awake()
+        {
+            // 1. Singleton Kurulumu
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            // 2. DEPENDENCY COMPOSITION (Bağımlılık Kurulumu)
+            // GetComponent kullanmıyoruz. 
+            // AddComponent hem ekler hem referansı döndürür. Bellek dostudur.
+            Debug.Log("⚙️ Sistem başlatılıyor: Servisler enjekte ediliyor...");
+            
+            _apiService = gameObject.AddComponent<ApiDataService>();
+            
+            // Eğer servis eklenemezse null döner, kontrol edelim (Opsiyonel ama güvenli)
+            if (_apiService == null)
+            {
+                Debug.LogError("🚨 KRİTİK HATA: ApiDataService oluşturulamadı!");
+            }
+        }
+
+        public async UniTask<bool> AuthenticateUser(string username, string password)
+        {
+            // Servis referansımız garanti, direkt kullanıyoruz.
+            try
+            {
+                CurrentUser = await _apiService.Login(username, password);
+                return true;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Patron: Giriş başarısız! - {ex.Message}");
+                return false;
+            }
+        }
+
+        public async UniTask<GameLevelItem[]> GetLevelList(string letter, string floorType)
+        {
+            CurrentLetter = letter;
+            CurrentFloorType = floorType;
+
+            try
+            {
+                return await _apiService.GetGamesForLetter(letter, floorType);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Patron: Liste çekilemedi! - {ex.Message}");
+                return null;
+            }
+        }
+
+        public async UniTask<bool> PrepareGameSession(string gameId)
+        {
+            try
+            {
+                ActiveAssetSet = await _apiService.GetAssetSet(gameId);
+                
+                if (ActiveAssetSet != null && ActiveAssetSet.Assets.Count > 0)
+                {
+                    Debug.Log($"Patron: {gameId} yüklendi. {ActiveAssetSet.Assets.Count} asset hazır.");
+                    return true;
+                }
+                
+                Debug.LogWarning("Patron: Asset seti boş!");
+                return false;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Patron: Oyun hazırlanamadı! - {ex.Message}");
+                return false;
+            }
+        }
+    }
+}

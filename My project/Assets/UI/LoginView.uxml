@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/MainTheme.uss?fileID=7433441132597879392&amp;guid=7b10577c250592545aac04df6aeb350c&amp;type=3#MainTheme" />
+    <ui:VisualElement name="container" class="root-container">
+        <ui:Label text="Parrot Talks" name="lbl-title" class="header-title" />
+        <ui:TextField name="input-username" placeholder-text="Kullanıcı Adı" class="app-input" />
+        <ui:TextField name="input-password" password="true" placeholder-text="Şifre" class="app-input" />
+        <ui:Label text="Kullanıcı adı veya şifre hatalı!" name="lbl-error" style="color: red; font-size: 18px; display: none; margin-bottom: 10px;" />
+        <ui:Button text="GİRİŞ YAP" name="btn-login" class="btn-primary" style="width: 300px;" />
+        <ui:Button text="Kayıt Ol" name="btn-register" class="btn-secondary" />
+        <ui:Label text="Lütfen bekleyiniz..." name="lbl-loading" style="color: rgb(102, 102, 102); font-size: 16px; display: none;" />
+    </ui:VisualElement>
+</ui:UXML>
