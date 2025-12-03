@@ -1,9 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ui:UXML
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ui="UnityEngine.UIElements"
-    xmlns:uie="UnityEditor.UIElements"
-    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
->
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     
+    <ui:Button name="btn-letter" style="
+        width: 150px;
+        height: 150px;
+        background-color: #FFECB3; /* Açık Sarı */
+        border-radius: 25px;
+        border-width: 0;
+        margin: 10px;
+        justify-content: center;
+        align-items: center;
+        transition-duration: 0.1s;
+    ">
+        <ui:Label text="A" name="lbl-char" style="
+            font-size: 80px;
+            -unity-font-style: bold;
+            color: #5D4037;
+        " />
+        
+        <ui:Label text="🔒" name="lbl-lock" style="
+            font-size: 40px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: none; 
+        " />
+    </ui:Button>
+
 </ui:UXML>

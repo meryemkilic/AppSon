@@ -159,37 +159,36 @@ namespace SpeechTherapy.Services
                 return JsonConvert.DeserializeObject<AssetSetResponse>(request.downloadHandler.text);
             }
         }
-    }
 
-    // -------------------------------------------------------------------------
-        // 4. HARF LİSTESİ (ANA MENÜ)
-        // -------------------------------------------------------------------------
         public async UniTask<LetterItem[]> GetAvailableLetters()
         {
             if (_useMockData)
             {
-                await UniTask.Delay(300);
-                Debug.Log("🎭 [MOCK] Harf listesi çekiliyor...");
+                await UniTask.Delay(100);
+                Debug.Log("🎭 [MOCK] Tüm harfler açık olarak listeleniyor...");
 
-                // SENARYO: K açık, S ve L kilitli.
-                return new LetterItem[]
+                // Basit bir döngü ile A'dan Z'ye harf üretelim
+                // Hepsi KİLİTSİZ (IsLocked = false)
+                var mockList = new List<LetterItem>();
+                string alphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+                
+                foreach (char c in alphabet)
                 {
-                    new LetterItem { Char = "K", IsLocked = false, Stars = 2 },
-                    new LetterItem { Char = "S", IsLocked = true, Stars = 0 },
-                    new LetterItem { Char = "L", IsLocked = true, Stars = 0 },
-                    new LetterItem { Char = "A", IsLocked = true, Stars = 0 },
-                    new LetterItem { Char = "B", IsLocked = true, Stars = 0 }
-                };
+                    mockList.Add(new LetterItem 
+                    { 
+                        Char = c.ToString(), 
+                        IsLocked = false, // Hepsini açtık
+                        Stars = UnityEngine.Random.Range(0, 4) // Rastgele yıldız (0-3 arası)
+                    });
+                }
+
+                return mockList.ToArray();
             }
 
-            // GERÇEK BAĞLANTI
-            var url = $"{BASE_URL}/letters"; // Backend endpointi
-            using (var request = UnityWebRequest.Get(url))
-            {
-                if (!string.IsNullOrEmpty(_jwtToken)) request.SetRequestHeader("Authorization", $"Bearer {_jwtToken}");
-                await request.SendWebRequest();
-                if (request.result != UnityWebRequest.Result.Success) throw new Exception(request.error);
-                return JsonConvert.DeserializeObject<LetterItem[]>(request.downloadHandler.text);
-            }
+            // ... (Gerçek bağlantı kısmı aynı kalacak) ...
+             var url = $"{BASE_URL}/letters"; 
+            // ...
         }
+    }
+    
 }

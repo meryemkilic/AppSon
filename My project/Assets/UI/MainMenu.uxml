@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="MainTheme.uss" />
+
+    <ui:VisualElement class="root-container">
+        
+        <ui:Label text="Harf Seç" class="header-title" style="margin-top: 40px;" />
+
+        <ui:ScrollView style="width: 100%; flex-grow: 1;">
+            <ui:VisualElement name="grid-container" style="
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 20px;
+            ">
+                </ui:VisualElement>
+        </ui:ScrollView>
+
+    </ui:VisualElement>
+</ui:UXML>

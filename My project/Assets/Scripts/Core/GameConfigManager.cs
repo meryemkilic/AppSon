@@ -46,6 +46,13 @@ namespace SpeechTherapy.Core
             }
         }
 
+        // Seçilen harfi hafızaya kaydeder
+        public void SetSelectedLetter(string letter)
+        {
+            CurrentLetter = letter;
+            Debug.Log($"Patron: Seçilen harf hafızaya alındı -> {CurrentLetter}");
+        }
+
         public async UniTask<bool> AuthenticateUser(string username, string password)
         {
             // Servis referansımız garanti, direkt kullanıyoruz.
@@ -98,5 +105,37 @@ namespace SpeechTherapy.Core
                 return false;
             }
         }
-    }
+    }// Assets/_Game/Scripts/Services/ApiDataService.cs içindeki ilgili metot:
+
+        public async UniTask<LetterItem[]> GetAvailableLetters()
+        {
+            if (_useMockData)
+            {
+                await UniTask.Delay(100);
+                Debug.Log("🎭 [MOCK] Tüm harfler açık olarak listeleniyor...");
+
+                // Basit bir döngü ile A'dan Z'ye harf üretelim
+                // Hepsi KİLİTSİZ (IsLocked = false)
+                var mockList = new List<LetterItem>();
+                string alphabet = "BCÇDFGĞHKLMNPRSŞTVYZ";
+                
+                foreach (char c in alphabet)
+                {
+                    mockList.Add(new LetterItem 
+                    { 
+                        Char = c.ToString(), 
+                        IsLocked = false, // Hepsini açtık
+                        Stars = UnityEngine.Random.Range(0, 4) // Rastgele yıldız (0-3 arası)
+                    });
+                }
+
+                return mockList.ToArray();
+            }
+
+            // ... (Gerçek bağlantı kısmı aynı kalacak) ...
+             var url = $"{BASE_URL}/letters"; 
+            // ...
+        }
+
+        
 }
