@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements; // UI Toolkit kütüphanesi
 using Cysharp.Threading.Tasks; // UniTask
+using UnityEngine.SceneManagement; // 🎯 YENİ: SAHNE YÖNETİMİ İÇİN EKLENDİ
 using SpeechTherapy.Core;      // GameConfigManager'a ulaşmak için
-using UnityEngine.SceneManagement;
 
 namespace SpeechTherapy.UI
 {
@@ -33,7 +33,6 @@ namespace SpeechTherapy.UI
             var root = _doc.rootVisualElement;
 
             // 1. ELEMANLARI BUL (Query - Q Metodu)
-            // UXML tarafında "Name" kısmına ne yazdıysak aynısını buraya yazıyoruz.
             _inputUsername = root.Q<TextField>("input-username");
             _inputPassword = root.Q<TextField>("input-password");
             _btnLogin = root.Q<Button>("btn-login");
@@ -67,7 +66,6 @@ namespace SpeechTherapy.UI
             SetLoadingState(true);
             
             // PATRONA GİT: "Bu kullanıcıyı içeri al"
-            // GameConfigManager bizim için ApiDataService ile konuşacak.
             bool success = await GameConfigManager.Instance.AuthenticateUser(username, password);
 
             // Cevap geldi, yükleniyor modunu kapat
@@ -77,8 +75,9 @@ namespace SpeechTherapy.UI
             {
                 Debug.Log("🎉 UI: Giriş Başarılı! Ana Menüye geçiliyor...");
                 ShowError(""); // Varsa hata mesajını sil
-                 SceneManager.LoadScene("MenuScene");
                 
+                // 🎯 SAHNE GEÇİŞ KOMUTU: MenuScene'i yüklüyoruz.
+                SceneManager.LoadScene("MenuScene");
             }
             else
             {

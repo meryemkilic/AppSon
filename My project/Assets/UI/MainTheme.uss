@@ -38,7 +38,7 @@
     width: 90%;
     max-width: 300px;
     height: 80px;
-    background-color: rgb(255, 107, 107);
+    background-color: rgb(120, 93, 199);
     border-radius: 45px;
     border-width: 0;
     margin-top: 0;
@@ -54,7 +54,7 @@
 }
 
 .btn-primary:active {
-    background-color: rgb(224, 85, 85);
+    background-color: rgb(58, 121, 175);
     scale: 0.95;
 }
 

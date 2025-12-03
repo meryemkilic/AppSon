@@ -159,7 +159,7 @@ namespace SpeechTherapy.Services
                 Debug.Log("🎭 [MOCK] Tüm harfler açık olarak listeleniyor...");
 
                 var mockList = new List<LetterItem>();
-                string alphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+                string alphabet = "BCÇDFGĞHJKLMNPRSŞTVYZ";
                 
                 foreach (char c in alphabet)
                 {
